@@ -35,16 +35,28 @@
         function print_search_results()
         {
             $db = get_database();
+
+            # Shows wiki
+            if(isset($_GET["wiki"]))
+            {   
+                echo "<div class='wiki-container'>";
+                $query = $db->query("SELECT Tag, COUNT(ID) AS 'Count' FROM Tags JOIN Catalog ON Catalog.ID_Tag = Tags.ID GROUP BY Tag ORDER BY Count DESC");
+                foreach($query as $row)
+                {
+                    echo "<h4 class='wiki'><a href=index.php?tags=". $row['Tag'] .">". $row['Count'] . ' x ' . $row['Tag'] ."</a></h4>";
+                }
+                echo "</div>";
+                return;
+            }
+
             if (!empty($_GET["tags"]) && isset($_GET["tags"]))
                 {
-                if ($_GET["tags"] != "wiki")
-                {
+
                     # Query Tags
                     $query_intersect = "";
                     
                     $tags = explode(" ", $_GET['tags']);
                     rsort($tags);
-
                     foreach($tags as $tag)
                     {
                         if(empty($tag))
@@ -70,9 +82,7 @@
                             }
                             $query_intersect = $query_intersect ."SELECT ID_Metadata FROM Tags JOIN Catalog ON Tags.ID = Catalog.ID_Tag WHERE Tag = '". $tag . "' ";
                         }
-                            
-                    }
-                    
+                    }     
                     # Code so it shows results at random order
                     $query = $db->query("SELECT * FROM Metadata WHERE ID IN (". $query_intersect . ")");
                     $query = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -84,16 +94,7 @@
                         unset($query[$i]);
                     }
                 }
-                else
-                {
-                    # Shows wiki
-                    $query = $db->query("SELECT Tag, COUNT(ID) AS 'Count' FROM Tags JOIN Catalog ON Catalog.ID_Tag = Tags.ID GROUP BY Tag ORDER BY Count DESC");
-                    foreach($query as $row)
-                    {
-                        echo "<h3><a href=index.php?tags=". $row['Tag'] .">". $row['Count'] . ' x ' . $row['Tag'] ."</a></h3><br>";
-                    }
-                }
-            }
+            
             else
             {
                 $db = get_database();
@@ -209,12 +210,13 @@
             echo '
             <div class="bottom-bar">
                 <div class="form-container">
-                    <form action="./index.php" method="GET">
+                    <form action="./index.php" method="GET" class="form-container">
                         <input type="hidden" name="hash" value="'. $_GET['hash'] .'">
                         <input type="hidden" name="tags" value="'. $_GET['tags'] .'">
+                        <input type="submit" name="del" class="del-button" value="-">
                         <input type="text" name="tags-edit" class="tags-text" placeholder="tags" required >
                         <input type="submit" name="add" class="add-button" value="+">
-                        <input type="submit" name="del" class="del-button" value="-">
+
                     </form>
                 </div>
             </div>
@@ -256,7 +258,7 @@
 
             echo '">
                         <input type="submit" id="search" value="Search 🔍">
-                        <input type="submit" id="tags" value="Tags">
+                        <input type="submit" id="wiki" name="wiki" value="Wiki">
                     </form>
                 </div>
             </div>';
@@ -301,7 +303,7 @@
                 #echo "Daten erfolgreich eingefügt!";
                 $command = "magick '$file' -resize 200x300^ -gravity center -extent 200x300 '". get_root() ."pictures/thumbnails/$hash.jpg'";
                 exec($command);
-                rename($file, get_root()."pictures/".$hash.".".$file_type);
+                rename($file, get_root()."pictrues/".$hash.".".$file_type);
                 exec("python vector_import.py ". $hash ." ". get_root() ."pictures/". $hash . ".". $file_type);
             }
         }
