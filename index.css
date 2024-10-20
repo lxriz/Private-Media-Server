@@ -1,0 +1,407 @@
+.picture-grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10pt;
+    margin-top: 100px;
+    margin-bottom: 500px;
+    z-index: auto;
+}
+
+.picture-box {
+    aspect-ratio: 2/3;
+    min-width: 50px;
+    max-width: 200px;
+    background-color: #131212;
+    display: inline-block;
+    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
+    opacity: 0.55;
+    border-radius: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    z-index: 1;
+}
+
+
+.picture-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+
+.picture-box:hover {
+    transform: scale(1.2);
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    background-color: #7cee6a;
+    z-index: 10;
+}
+
+.video-box {
+    aspect-ratio: 2/3;
+    min-width: 50px;
+    max-width: 200px;
+    background-color: #131212;
+    display: inline-block;
+    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
+    opacity: 0.55;
+    border-radius: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    z-index: 1;
+}
+
+
+.video-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+
+.video-box:hover {
+    transform: scale(1.2);
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    background-color: #2b92c9;
+    z-index: 10;
+}
+
+.picture-grid-container-main {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10pt;
+    margin-top: 100px;
+    margin-bottom: 500px;
+    z-index: auto;
+}
+
+.picture-box-main {
+    width: 50%;
+    max-height: 40%;
+    background-color: #000000;
+    display: inline-block;
+    transition: transform 0.4s ease-in, opacity 0.2s ease-in-out;
+    z-index: 1;
+    border-radius: 20px;
+    margin-top: 100px;
+
+}
+
+.picture-box-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    opacity: 1;
+}
+
+
+.picture-box-main:hover {
+    transform: scale(1.5);
+    transition-delay: 0.68s;
+    position: relative;
+    opacity: 1;
+    z-index: 10;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.tags {
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tags:hover {
+    transform: scale(1.1);
+    color: #24cd4b;
+}
+
+.tags-container {
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+h3 {
+    user-select: none;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+}
+
+.top-bar {
+    width: 68%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    transition: opacity 0.25s ease-in-out;
+    transition-delay: 0.3s;
+}
+
+.bottom-bar {
+    color: white;
+    width: 68%;
+    position: fixed;
+    bottom: 0;
+    padding-bottom: 3%;
+    z-index: 1000;
+    transition: opacity 0.25s ease-in-out;
+    transition-delay: 0.3s;
+}
+
+
+h1 {
+    user-select: none;
+    color: white;
+    position: relative;
+    display: inline-block;
+    font-size: 3rem;
+}
+
+h3 {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 0px;
+}
+
+input[type="text"] {
+    width: 400px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 20px;
+    outline: none;
+    height: 100%;
+    margin: 0px;
+    background-color: #1e1e20;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+/* Styles for submit buttons */
+input[type="submit"] {
+    background-color: #42c465;
+    /* Default green background */
+    color: white;
+    padding: 15px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    display: inline-block;
+    width: 150px;
+    margin: 0;
+    border: none;
+    transition: transform 0.1s ease, border-radius 0.05s ease;
+}
+
+/* Hover effect for submit buttons */
+input[type="submit"]:hover {
+    transform: scale(1.2);
+    background-color: #42ac5e;
+    /* Slightly darker green on hover */
+    z-index: 100;
+}
+
+/* Hover effect for text inputs */
+input[type="text"]:hover {
+    background-color: #d0d0d0;
+    /* Slightly darker background on hover */
+}
+
+/* Focus effect for text inputs */
+input[type="text"]:focus {
+    background-color: #FFFFFF;
+    /* White background on focus */
+}
+
+
+input[type="text"].tags-text {
+    width: 400px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    height: 100%;
+    margin: 0px;
+    background-color: #1e1e20;
+    transition: background-color 0.3s ease;
+    border: none;
+    border-radius: 20px 0px 0px 20px;
+    margin: 0px;
+    border: none;
+}
+
+input[type="text"].tags-text:hover {
+    background-color: #d0d0d0;
+    /* Slightly darker background on hover */
+}
+
+/* Focus effect for text inputs */
+input[type="text"].tags-text:focus {
+    background-color: #FFFFFF;
+    /* White background on focus */
+}
+
+input[type="submit"].del-button {
+    color: rgb(248, 248, 248);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    /* Uppercase text */
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Light shadow */
+    transition: all 0.4s ease;
+    /* Smooth transition */
+    min-width: 100px;
+    max-width: 200px;
+    border-radius: 0px 20px 20px 0px;
+    margin: 0px;
+    background: linear-gradient(to left, #2f302f 50%, #b12238 50%);
+    /* Color transition from left to right */
+    background-size: 200% 100%;
+    /* Double the background width for horizontal movement */
+    background-position: right center;
+    /* Initially gray on the right */
+}
+
+input[type="submit"].del-button:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    /* Stronger shadow */
+    color: rgb(57, 55, 55);
+    background-position: left center;
+    /* Move red from left to right on hover */
+    transform: none;
+}
+
+input[type="submit"].add-button {
+    color: rgb(248, 248, 248);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    /* Uppercase text */
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Light shadow */
+    transition: all 0.4s ease;
+    /* Smooth transition */
+    min-width: 100px;
+    max-width: 200px;
+    border-radius: 0px;
+    margin: 0px;
+    background: linear-gradient(to left, #2f302f 50%, #22b124 50%);
+    /* Color transition from left to right */
+    background-size: 200% 100%;
+    /* Double the background width for horizontal movement */
+    background-position: right center;
+    /* Initially gray on the right */
+}
+
+input[type="submit"].add-button:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    /* Stronger shadow */
+    color: rgb(57, 55, 55);
+    background-position: left center;
+    /* Move green from left to right on hover */
+    transform: none;
+}
+
+body {
+    background-color: #202124;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.column {
+    width: 16%;
+    flex: 1;
+    text-align: center;
+    margin: 0px;
+    border: 0px;
+    z-index: auto;
+}
+
+.column-middle {
+    flex-basis: 68%;
+    min-width: 400px;
+    text-align: center;
+    background-color: #18181a;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    z-index: auto;
+}
+
+.scrollbox {
+    height: 1000px;
+    /* Set a fixed height for the scrollbox */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding: 10px;
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+}
+
+h4 {
+    opacity: 0.5;
+    user-select: none;
+    margin-top: 0px;
+
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.scrollbox::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.scrollbox {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
