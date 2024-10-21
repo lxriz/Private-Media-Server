@@ -27,42 +27,33 @@ if vector_search is None:
 
 vector_search = pickle.loads(vector_search[0])
 
-cursor.execute("SELECT Hash, Vector FROM Metadata JOIN Vectors ON Vectors.ID = Metadata.ID")
+cursor.execute("SELECT Hash, Vector, Metadata.ID FROM Metadata JOIN Vectors ON Vectors.ID = Metadata.ID")
 query = cursor.fetchall()
-cursor.close()
-connection.close()
-
 
 top_matches = []
 max_matches = 3
-# IDK what is better so we just use both ig
-if False:
-    for row in query:
-        if row[0] == hash:
-            continue
-        # Sinusgleicheit
-        dist1 = np.dot(vector_search, pickle.loads(row[1]))
-        dist2 = np.linalg.norm(pickle.loads(row[1])) * np.linalg.norm(vector_search)
-        dist = dist1/dist2
-    
-        top_matches.append([dist, row[0]])
-        top_matches.sort(key=lambda x: x[0], reverse=True)
-        if len(top_matches) > max_matches:
-            top_matches.pop(len(top_matches)-1)
 
-else:
-    for row in query:
-        if row[0] == hash:
-            continue
-        # Euklitischer Abstand
-        dist = np.linalg.norm(((vector_search-pickle.loads(row[1]))))
+for row in query:
+    if row[0] == hash:
+        continue
 
-        top_matches.append([dist, row[0]])
-        top_matches.sort(key=lambda x: x[0])
-        if len(top_matches) > max_matches:
-            top_matches.pop(len(top_matches)-1)
+    cursor.execute("SELECT COUNT(*) FROM (SELECT ID_Tag FROM Catalog WHERE ID_Metadata = (SELECT ID FROM Metadata WHERE Hash=?) INTERSECT SELECT ID_Tag FROM Catalog WHERE ID_Metadata = ?)", (hash, row[2]))
+    c = cursor.fetchall()    
+    c = c[0][0]
 
 
+    # Euklitischer Abstand
+    dist = np.linalg.norm(((vector_search-pickle.loads(row[1]))))
+    dist -= 0.3*c
+
+    # Get top 3
+    top_matches.append([dist, row[0]])
+    top_matches.sort(key=lambda x: x[0])
+    if len(top_matches) > max_matches:
+        top_matches.pop(len(top_matches)-1)
+
+cursor.close()
+connection.close()
 
 out = ""
 for pic in top_matches:

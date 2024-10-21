@@ -39,13 +39,11 @@
             # Shows wiki
             if(isset($_GET["wiki"]))
             {   
-                echo "<div class='wiki-container'>";
                 $query = $db->query("SELECT Tag, COUNT(ID) AS 'Count' FROM Tags JOIN Catalog ON Catalog.ID_Tag = Tags.ID GROUP BY Tag ORDER BY Count DESC");
                 foreach($query as $row)
                 {
                     echo "<h4 class='wiki'><a href=index.php?tags=". $row['Tag'] .">". $row['Count'] . ' x ' . $row['Tag'] ."</a></h4>";
                 }
-                echo "</div>";
                 return;
             }
 
