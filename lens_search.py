@@ -17,19 +17,30 @@ hash = args.hash
 connection = sqlite3.Connection("database.db")
 cursor = connection.cursor()
 
+# Check if hash is in database
 cursor.execute("SELECT Vector FROM Metadata JOIN Vectors ON Metadata.ID = Vectors.ID WHERE Hash = ?", (hash,))
 
-vector_search = cursor.fetchone()
+vector = cursor.fetchone()
 
-
-if vector_search is None:
+if vector is None:
     exit(-1);
 
-vector_search = pickle.loads(vector_search[0])
+
+# Get Parameters
+vector = pickle.loads(vector[0])
+
+
+cursor.execute("SELECT ID FROM Metadata WHERE Hash = ?", (hash,))
+id = cursor.fetchone()[0]
+cursor.execute("SELECT COUNT(*) FROM Catalog WHERE ID_Metadata = ?", (id,))
+count_tags = cursor.fetchone()[0]
+
 
 cursor.execute("SELECT Hash, Vector, Metadata.ID FROM Metadata JOIN Vectors ON Vectors.ID = Metadata.ID")
 query = cursor.fetchall()
 
+
+# Search parameters
 top_matches = []
 max_matches = 3
 
@@ -37,20 +48,22 @@ for row in query:
     if row[0] == hash:
         continue
 
-    cursor.execute("SELECT COUNT(*) FROM (SELECT ID_Tag FROM Catalog WHERE ID_Metadata = (SELECT ID FROM Metadata WHERE Hash=?) INTERSECT SELECT ID_Tag FROM Catalog WHERE ID_Metadata = ?)", (hash, row[2]))
-    c = cursor.fetchall()    
-    c = c[0][0]
-
-
+    
+    tags_score = 0
+    if count_tags > 0:
+        cursor.execute("SELECT COUNT(*) FROM (SELECT ID_Tag FROM Catalog WHERE ID_Metadata = ? INTERSECT SELECT ID_Tag FROM Catalog WHERE ID_Metadata = ?)", (id, row[2] ))
+        tags_score = cursor.fetchone()[0] / count_tags
+    
+    
     # Euklitischer Abstand
-    dist = np.linalg.norm(((vector_search-pickle.loads(row[1]))))
-    dist -= 0.3*c
+    score = (np.linalg.norm(((vector-pickle.loads(row[1])))))**(1-0.2*tags_score)
 
     # Get top 3
-    top_matches.append([dist, row[0]])
+    top_matches.append([score, row[0]])
     top_matches.sort(key=lambda x: x[0])
     if len(top_matches) > max_matches:
         top_matches.pop(len(top_matches)-1)
+
 
 cursor.close()
 connection.close()

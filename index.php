@@ -30,6 +30,67 @@
         }
     ?>
 
+    <!-- Remove Media -->
+    <?php
+        if(isset($_POST["remove"]))
+        {
+            $db = get_database();
+
+            try
+            {   
+                $db->beginTransaction();
+
+                if(!isset($_POST["hash"]))
+                {
+                    throw new Exception();
+                }
+
+                $hash = $_POST["hash"];
+
+                $stmt = $db->prepare("SELECT ID, Datatype FROM Metadata WHERE Hash = :hash");
+                $stmt->bindParam(':hash', $hash);
+                $stmt->execute();
+                $query = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+                if(!$query)
+                {
+                    throw new Exception();
+                }
+                
+                $id = $query["ID"];     
+                $datatype =  $query["Datatype"];  
+
+                $stmt = $db->prepare("DELETE FROM Catalog WHERE ID_Metadata = :ID");
+                $stmt->bindParam(':ID', $id);
+                $stmt->execute();
+                $stmt = $db->prepare("DELETE FROM Vectors WHERE ID = :ID");
+                $stmt->bindParam(':ID', $id);
+                $stmt->execute();
+
+                $stmt = $db->prepare("DELETE FROM Metadata WHERE ID = :ID");
+                $stmt->bindParam(':ID', $id);
+                $stmt->execute();
+                
+                if(file_exists(get_root() . "pictures/thumbnails/". $hash .".jpeg"))
+                {
+                    unlink(get_root() . "pictures/thumbnails/". $hash .".jpeg");
+                }
+                
+                if(file_exists(get_root() . "pictures/". $hash .".jpeg"))
+                {
+                    unlink(get_root() . "pictures/". $hash .".jpeg");
+                }
+
+                $db->commit();
+            }
+            catch(Exception $e)
+            {                
+                $db->rollBack();
+            }
+        }
+    ?>
+    
+    
     <!-- Main Page State Machine Functions --> 
     <?php 
         function print_search_results()
@@ -49,7 +110,6 @@
 
             if (!empty($_GET["tags"]) && isset($_GET["tags"]))
                 {
-
                     # Query Tags
                     $query_intersect = "";
                     
@@ -199,7 +259,6 @@
                     echo " • ";
                 }
                 echo "</h3></div>";
-
             }
         }
 
@@ -208,13 +267,10 @@
             echo '
             <div class="bottom-bar">
                 <div class="form-container">
-                    <form action="./index.php" method="GET" class="form-container">
-                        <input type="hidden" name="hash" value="'. $_GET['hash'] .'">
-                        <input type="hidden" name="tags" value="'. $_GET['tags'] .'">
+                    <form action="./index.php?hash='. $_GET['hash'] .'&tags='. $_GET['tags'].'" method="POST" class="form-container">
                         <input type="submit" name="del" class="del-button" value="-">
-                        <input type="text" name="tags-edit" class="tags-text" placeholder="tags" required >
+                        <input type="text" name="edit" class="tags-text" placeholder="tags" required >
                         <input type="submit" name="add" class="add-button" value="+">
-
                     </form>
                 </div>
             </div>
@@ -227,15 +283,20 @@
             <!-- Top bar -->
             <div class="top-bar">
                 <div class="form-container">
-                    <form action="./index.php" method="GET">
-                        ';
-                            
+                    <form action="./index.php" method="POST">
+                ';
+                       
             if (isset($_GET["hash"])) {
-                echo "<input type='submit' value='Remove'>";
+                echo "<input type='hidden' name='hash' value='". htmlspecialchars($_GET["hash"]) ."'>";
+                echo "<input type='submit' name='remove' value='Remove'>";
             } else {
                 echo "<input type='submit' value='Upload'>";
             }
 
+            echo '  </form>
+                    <form action="./index.php" method="GET">
+                        ';
+                       
             echo '
                         <input type="text" name="tags" placeholder="';
 
@@ -301,7 +362,7 @@
                 #echo "Daten erfolgreich eingefügt!";
                 $command = "magick '$file' -resize 200x300^ -gravity center -extent 200x300 '". get_root() ."pictures/thumbnails/$hash.jpg'";
                 exec($command);
-                rename($file, get_root()."pictrues/".$hash.".".$file_type);
+                rename($file, get_root()."pictures/".$hash.".".$file_type);
                 exec("python vector_import.py ". $hash ." ". get_root() ."pictures/". $hash . ".". $file_type);
             }
         }
@@ -328,6 +389,7 @@
 
             if ($count !== 0)
             {
+                unlink($file);
                 continue;
             }
             
@@ -354,7 +416,7 @@
     <?php
         function tag_handling()
         {
-            if(!empty($_GET['hash']) && !empty($_GET['tags-edit']) && (!empty($_GET['add']) || !empty($_GET['del'])))
+            if(!empty($_GET['hash']) && !empty($_POST['edit']) && (!empty($_POST['add']) || !empty($_POST['del'])))
             {
                 $db = get_database();
 
@@ -368,11 +430,10 @@
                 
 
                 # Delete
-                if(isset($_GET['del']))
+                if(isset($_POST['del']))
                 {   
                     try 
                     {
-                        // Begin a transaction
                         $db->beginTransaction();
                     
                         $stmt = $db->prepare("
@@ -381,7 +442,7 @@
                             AND ID_Tag IN (SELECT ID FROM Tags WHERE Tag = :tags)
                         ");
                     
-                        foreach (explode(" ", $_GET['tags-edit']) as $tag)
+                        foreach (explode(" ", $_POST['edit']) as $tag)
                         {
                             // Execute the prepared statement for each tag
                             $stmt->execute([':hash' => $_GET['hash'], ':tags' => $tag]);
@@ -392,20 +453,19 @@
                     } 
                     catch (Exception $e) 
                     {
-                        // Roll back if an error occurs
                         $db->rollBack();
                     }
                     return;
                 }        
                 
                 # Add
-                if(isset($_GET['add']))
+                if(isset($_POST['add']))
                 {   
                     try 
                     {
                         $db->beginTransaction();
                     
-                        foreach (explode(" ", $_GET['tags-edit']) as $tag)
+                        foreach (explode(" ", $_POST['edit']) as $tag)
                         {
                             if(empty($tag))
                             {
@@ -519,17 +579,22 @@
 
      <!-- Java Script -->
      <script>
-        document.querySelector('.picture-box-main').addEventListener('mouseenter', function()
-        {
-            document.querySelector('.top-bar').style.opacity = '0.5';
-            document.querySelector('.bottom-bar').style.opacity = '0.5';
-        });
+        let object = document.querySelector('.picture-box-main')
 
-        document.querySelector('.picture-box-main').addEventListener('mouseleave', function() 
+        if(object !== null)
         {
-            document.querySelector('.top-bar').style.opacity = '1';
-            document.querySelector('.bottom-bar').style.opacity = '1';
-        });
+            object.addEventListener('mouseenter', function()
+            {
+                document.querySelector('.top-bar').style.opacity = '0.5';
+                document.querySelector('.bottom-bar').style.opacity = '0.5';
+            });
+
+            object.addEventListener('mouseleave', function() 
+            {
+                document.querySelector('.top-bar').style.opacity = '1';
+                document.querySelector('.bottom-bar').style.opacity = '1';
+            });
+        }
     </script>
 </body>
 </html>

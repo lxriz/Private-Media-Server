@@ -53,7 +53,7 @@ body {
     position: relative;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     opacity: 1;
-    background-color: #ffffff;
+    background-color: #54f139;
     z-index: 10;
 }
 
@@ -136,9 +136,14 @@ a {
 }
 
 .tags {
-    transition: transform 0.3s ease;
+    transition: color 0.1s ease-in;
     text-decoration: none;
     color: inherit;
+}
+
+.tags:hover{
+    
+    color: #7ce14a;
 }
 
 .tags-container {
@@ -224,6 +229,7 @@ input[type="text"] {
     background-color: #1e1e20;
     transition: background-color 0.3s ease;
     border: none;
+    color: white;
 }
 
 input[type="submit"] {
@@ -249,6 +255,7 @@ input[type="submit"]:hover {
 
 input[type="text"]:hover {
     background-color: #d0d0d0;
+    color: #000000;
 }
 
 input[type="text"]:focus {
