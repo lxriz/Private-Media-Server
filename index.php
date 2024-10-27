@@ -100,11 +100,22 @@
             # Shows wiki
             if(isset($_GET["wiki"]))
             {   
-                $query = $db->query("SELECT Tag, COUNT(ID) AS 'Count' FROM Tags JOIN Catalog ON Catalog.ID_Tag = Tags.ID GROUP BY Tag ORDER BY Count DESC");
+                $stmt = $db->prepare("SELECT Tag, COUNT(ID) AS 'Count' FROM Tags JOIN Catalog ON Catalog.ID_Tag = Tags.ID GROUP BY Tag ORDER BY Count DESC");
+                $stmt->execute();
+                $query = $stmt->fetchall(PDO::FETCH_ASSOC);
+
                 foreach($query as $row)
                 {
                     echo "<h4 class='wiki'><a href=index.php?tags=". $row['Tag'] .">". $row['Count'] . ' x ' . $row['Tag'] ."</a></h4>";
                 }
+
+                echo "
+                <div class='form-container'>
+                <form action='index.php' method='GET' class='form-container'>
+                        <input type='hidden' name='tags' value='". $query[array_rand($query)]["Tag"]."'>
+                        <input type='submit' class='random-button' value='Suprise 🎉'>
+                </form>
+                </div>";
                 return;
             }
 
@@ -183,7 +194,7 @@
             {
                 # Videos
                 echo    '<a href="./index.php?hash='. $row["Hash"] . "&tags=" . $tags .'">
-                            <div class="video-box">
+                            <div class="picture-box">
                                 <img src="' . get_root() .'videos/thumbnails/' . $row["Hash"] . '.jpg' . '", alt="Error QwQ">
                             </div>
                         </a>';
@@ -230,6 +241,30 @@
                         echo "<h4>&#9658 click thumbnail to see fullscreen</h4>";
     
                     }
+
+                    $response = exec("python lens_search.py ". $_GET["hash"]);
+                    $stmt = "SELECT Tag FROM Metadata JOIN Catalog ON Catalog.ID_Metadata = Metadata.ID JOIN Tags ON Tags.ID = Catalog.ID_Tag WHERE ";
+                    $hashes = "";
+                    foreach(explode(" ", $response) as $hash)
+                    {   
+                        if(!empty($hashes))
+                        {
+                            $hashes = $hashes . " OR ";
+                        }
+                        $hashes = $hashes. "Hash = '". $hash ."' ";
+                    }
+                    $stmt = $stmt. $hashes . " GROUP BY Tag HAVING COUNT(Tag) > 1";
+                    $stmt = $stmt . " EXCEPT SELECT Tag FROM Metadata JOIN Catalog ON Catalog.ID_Metadata = Metadata.ID JOIN Tags ON Tags.ID = Catalog.ID_Tag WHERE Hash ='". $_GET["hash"]."'";
+
+                    $db = get_database();
+                    $query = $db->query($stmt);
+                    echo "<h4>";
+                    foreach($query as $tag)
+                    {
+                        echo $tag["Tag"]. " • ";
+                    }
+                    echo "</h4>";
+
                 }
             }
         }
@@ -288,7 +323,7 @@
                        
             if (isset($_GET["hash"])) {
                 echo "<input type='hidden' name='hash' value='". htmlspecialchars($_GET["hash"]) ."'>";
-                echo "<input type='submit' name='remove' value='Remove'>";
+                echo "<input type='button' name='remove' value='🗑️' id='remove-button' class='remove-button' onclick='confirm_remove()'>";
             } else {
                 echo "<input type='submit' value='Upload'>";
             }
@@ -511,6 +546,33 @@
         tag_handling();
     ?>
      
+   <!-- Script Remove Button -->
+   <script>
+        let remove_pressed = false;
+
+        function confirm_remove()
+        {
+            const button = document.getElementById("remove-button");
+
+            if(!remove_pressed)
+            {
+                button.style.backgroundColor = "#d72848";
+                button.value = "Confirm";
+                remove_pressed = true;
+                setTimeout(() => {
+                    button.value = "Remove";
+                    button.style.backgroundColor = "#61dc4e";
+                    remove_pressed = false;
+                }, 5000);
+            }
+            else
+            {            
+                console.log("GAY");
+                button.type = "Submit";
+            }
+        }
+    </script>
+
 
     <!-- Main Page -->
     <div class=container>
@@ -592,9 +654,11 @@
             object.addEventListener('mouseleave', function() 
             {
                 document.querySelector('.top-bar').style.opacity = '1';
-                document.querySelector('.bottom-bar').style.opacity = '1';
+                document.querySelector('.bottom-bar').style.opacity = '0.9';
             });
         }
     </script>
+
+     
 </body>
 </html>

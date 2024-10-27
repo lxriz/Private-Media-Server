@@ -19,7 +19,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     gap: 10pt;
-    margin-top: 100px;
+    margin-top: 150px;
     margin-bottom: 500px;
     z-index: auto;
 }
@@ -28,11 +28,11 @@ body {
     aspect-ratio: 2/3;
     min-width: 50px;
     max-width: 200px;
-    background-color: #333333;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #262626;
+    box-shadow: 0px 30px 50px rgba(0, 0, 0, 1);
     display: inline-block;
-    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
-    opacity: 0.55;
+    transition: transform 0.3s ease, opacity 0.2s ease-in-out, border-radius 0.3s ease;
+    opacity: 0.35;
     border-radius: 20px;
     margin-left: 20px;
     margin-right: 20px;
@@ -45,48 +45,20 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 20px;
+    display: block; 
 }
 
 
 .picture-box:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
     position: relative;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    opacity: 1;
-    background-color: #54f139;
+    box-shadow: 0px 30px 50px rgba(0, 0, 0, 1);
     z-index: 10;
-}
-
-.video-box {
-    aspect-ratio: 2/3;
-    min-width: 50px;
-    max-width: 200px;
-    background-color: #131212;
-    display: inline-block;
-    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
-    opacity: 0.55;
-    border-radius: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
-    z-index: 1;
-}
-
-
-.video-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-}
-
-
-.video-box:hover {
-    transform: scale(1.2);
-    position: relative;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     opacity: 1;
-    background-color: #2b92c9;
-    z-index: 10;
+}
+
+.picture-box:active {
+    transform: scale(1.10);
 }
 
 .picture-grid-container-main {
@@ -106,11 +78,12 @@ body {
     max-height: 40%;
     background-color: #000000;
     display: inline-block;
-    transition: transform 0.4s ease-in, opacity 0.2s ease-in-out;
+    transition: transform 0.4s ease-in, opacity 0.2s ease-in-out, box-shadow 0.3s ease;
     z-index: 1;
+    box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.6);
+
     border-radius: 20px;
     margin-top: 100px;
-
 }
 
 .picture-box-main img {
@@ -118,7 +91,7 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 20px;
-    opacity: 1;
+    display: block; 
 }
 
 
@@ -126,6 +99,7 @@ body {
     transform: scale(1.5);
     transition-delay: 0.82s;
     position: relative;
+    box-shadow: 0px 30px 50px rgba(0, 0, 0, 1);
     opacity: 1;
     z-index: 10;
 }
@@ -173,6 +147,7 @@ a {
     transition: opacity 0.25s ease-in-out;
     transition-delay: 0.3s;
     gap: 0px;
+    opacity: 0.9;
 }
 
 
@@ -233,7 +208,7 @@ input[type="text"] {
 }
 
 input[type="submit"] {
-    background-color: #61dc4e;
+    background-color: #e2185e;
     color: white;
     padding: 15px 25px;
     border-radius: 20px;
@@ -250,6 +225,50 @@ input[type="submit"] {
 input[type="submit"]:hover {
     transform: scale(1.2);
     background-color: #61dc4e;
+    z-index: 100;
+}
+
+input[type="button"].remove-button {
+    background-color: #61dc4e;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    display: inline-block;
+    width: 150px;
+    margin: 0;
+    border: none;
+    transition: transform 0.1s ease, border-radius 0.05s ease, background-color 0.3s;
+}
+
+input[type="button"].remove-button:hover {
+    transform: scale(1.2);
+    background-color: #19e030;
+    color: white;
+    z-index: 100;
+}
+
+
+input[type="submit"].random-button {
+    background-color: #e32e53;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    display: inline-block;
+    width: 150px;
+    margin: 0;
+    border: none;
+    transition: transform 0.1s ease, border-radius 0.05s ease;
+}
+
+input[type="submit"].random-button:hover {
+    transform: scale(1.2);
+    background-color: #af364c;
     z-index: 100;
 }
 
