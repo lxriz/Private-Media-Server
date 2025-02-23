@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinky Cats</title>
+    <title>Viewer</title>
 
     <link rel="stylesheet" type="text/css" href="base_style.css">
     <link rel="stylesheet" type="text/css" href="index.css">
